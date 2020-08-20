@@ -90,7 +90,7 @@ totalFrames = 0 #처리된 총 프레임 수
 #아래 또는 위로 이동한 총 개체 수 
 totalDown = 0
 totalUp = 0
-
+tmp =0
 
 
 # start the frames per second throughput estimator
@@ -99,7 +99,7 @@ fps = FPS().start()
 
 sio = socketio.Client()
 
-sio.connect('http://localhost:5050')
+sio.connect('http://20.20.0.26:8080')
 print('my sid is',sio.sid)
 @sio.event
 def connect():
@@ -281,7 +281,7 @@ while True:
 				# is moving down) AND the centroid is below the
 				# center line, count the object
 				elif direction > 0 and centroid[1] > H // 2:
-					totalDown += 1
+					totalUp -= 1
 					to.counted = True
 
 		# store the trackable object in our dictionary
@@ -303,7 +303,12 @@ while True:
 		
 	]
 
-	sio.emit('my message', totalDown)
+	if tmp != totalUp:
+		sio.emit('my message',{'key':totalUp})
+		tmp = totalUp
+	else:
+		tmp = totalUp
+
 	# loop over the info tuples and draw them on our frame
 	for (i, (k, v)) in enumerate(info):
 		text = "{}: {}".format(k, v)
