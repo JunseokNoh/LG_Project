@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Example Web App</title>
+<style type="text/css">
+    body {
+        width: 100%;
+        height: 100%;
+        background-color:#202020;
+    }
+    div {
+        position:absolute;
+        height:100%;
+        width:100%;
+        display: table;
+    }
+    h1 {
+        display: table-cell;
+        vertical-align: middle;
+        text-align:center;
+        color:#FFFFFF;
+    }
+</style>
+
+</head>
+<body>
+    <form>
+    <!-- 서버로 메시지를 보낼 텍스트 박스 -->
+    <input id="textMessage" type="text">
+    <!-- 전송 버튼 -->
+    <input onclick="sendMessage()" value="Send" type="button">
+    <!-- 접속 종료 버튼 -->
+    <input onclick="disconnect()" value="Disconnect" type="button">
+    </form>
+    <br />
+    <!-- 출력 area -->
+    <textarea id="messageTextArea" rows="10" cols="50"></textarea>
+    
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+    <script> 
+        var messageTextArea = document.getElementById("messageTextArea");
+
+        const socket = io.connect("http://20.20.0.26:8080");
+
+        socket.on('connect', () => {
+        // either with send()
+        //socket.send('Hello!');
+
+        // or with emit() and custom event names
+        // socket.emit('my message', { 'mr': 'john' });
+        // });
+        socket.on('my message2', function(data){
+            messageTextArea.value = "Send to Server => "+data.key+"\n";
+        });
+    });
+    </script>
+    </body>
+
+</html>

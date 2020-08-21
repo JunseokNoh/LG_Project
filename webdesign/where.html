@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- basic -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- mobile metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+<!-- site metas -->
+<title>Services</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="author" content=""> 
+<!-- bootstrap css -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<!-- style css -->
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<!-- Responsive-->
+<link rel="stylesheet" href="css/responsive.css">
+<!-- fevicon -->
+<link rel="icon" href="images/fevicon.png" type="image/gif" />
+<!-- Scrollbar Custom CSS -->
+<link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+<!-- Tweaks for older IEs-->
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<!-- owl stylesheets --> 
+<link rel="stylesheet" href="css/owl.carousel.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script>
+  function send(place){
+    var roomarea = document.getElementById("rarea").value;
+    p = place.getAttribute("value");
+    document.location.href="confirm.html?"+p+":"+roomarea;
+  }
+</script>
+</head>
+<body>
+  <!--header section start -->
+    <div class="header_section header_bg">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="logo"><a href="index.html"><img src="images/logo2.png"></a></div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </nav>
+    </div>
+    <!--header section end -->
+    <!--services section start -->
+    <div class="what_we_do_section layout_padding" style="margin-top:3%;height:600px;background-image: url(images/services-bg.png);">
+      <div class="container">
+        <h1 class="what_taital">WHERE TO USE</h1>
+        <p class="what_text">This section is choosing the place you are going to use Automatic Vantilation Smart Window </p>
+        
+        <div class="what_we_do_section_2" style="display: flex;flex-direction: column;align-items: center;">
+          <div class="form-group" style="margin-bottom: 3%;">
+            <label for="exampleFormControlInput1">Room Area</label>
+            <input type="text" class="form-control" id="rarea" placeholder="10" value="10">
+          </div>
+
+
+
+          <div class="row" style="justify-content: center;margin-bottom: 10%;">
+            <div class="col-lg-3 col-sm-6">
+              <div class="box_main" onclick="send(this)" value="home">
+                <div class="icon_1"><img style="height:30%;width:30%;" src="images/home.png"></div>
+                <h3 class="accounting_text">HOME</h3>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+              <div class="box_main" onclick="send(this)" value="company">
+                <div class="icon_1"><img style="height:30%;width:30%;" src="images/company.png"></div>
+                <h3 class="accounting_text">COMPANY</h3>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+              <div class="box_main" onclick="send(this)" value="school">
+                <div class="icon_1"><img style="height:30%;width:30%;" src="images/school.png"></div>
+                <h3 class="accounting_text">SCHOOL</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--services section end -->
+    
+    </body>
+</html>
