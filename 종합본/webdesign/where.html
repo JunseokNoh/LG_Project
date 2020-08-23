@@ -29,6 +29,7 @@
 <!-- owl stylesheets --> 
 <link rel="stylesheet" href="css/owl.carousel.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>
   function send(place){
@@ -37,6 +38,18 @@
     document.location.href="confirm.html?"+p+":"+roomarea;
   }
 </script>
+<!-- where.html 로딩과 동시에 클라이언트 재연결 -->
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+<script>
+  window.onload = function(){
+      const socket = io.connect("http://localhost:8080");
+      console.log('추력테스트')
+      socket.on('connect',()=>{
+        socket.emit('where_connect',{'client_where':'connect_success'});
+      })
+  }
+</script>
+
 </head>
 <body>
   <!--header section start -->
@@ -57,8 +70,8 @@
         
         <div class="what_we_do_section_2" style="display: flex;flex-direction: column;align-items: center;">
           <div class="form-group" style="margin-bottom: 3%;">
-            <label for="exampleFormControlInput1">Room Area</label>
-            <input type="text" class="form-control" id="rarea" placeholder="10" value="10">
+            <label for="exampleFormControlInput1">Room Area (sqrt)</label>
+            <input type="text" class="form-control" id="rarea" placeholder="1000" value="1000">
           </div>
 
 
