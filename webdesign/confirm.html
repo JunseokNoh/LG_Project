@@ -30,6 +30,20 @@
 <link rel="stylesheet" href="css/owl.carousel.min.css">
 <link rel="stylesheet" href="css/owl.theme.default.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+<link rel="stylesheet" href="css/slidbar.css">
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+<script>
+  // window.onload = function(){
+  //     const socket = io.connect("http://localhost:8080");
+      
+  //     socket.on('connect',()=>{
+  //       socket.emit('confirm_connect',{'client_confirm':'connect_success'});
+  //     })
+    const socket = io.connect("http://localhost:8080");
+    socket.emit('confirm_connect',{'client_confirm' : 'connect_success'});
+
+  //}
+</script>
 </head>
 <body>
   <script>
@@ -38,6 +52,7 @@
     place = data[0];
     area = data[1];
   </script>
+
   <!--header section start -->
   <div class="header_section header_bg">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -49,7 +64,7 @@
   </div>
     <!--header section end -->
     <!-- contact section start -->
-    <div class="contact_section layout_padding" style="margin-top:3%;height:600px;background-image: url(images/services-bg.png);">
+    <div class="contact_section layout_padding" style="padding-top:30px;height:600px;background-image: url(images/services-bg.png);">
       <div class="container-fluid">
         <h1 class="what_taital">Confirm the state</h1>
         <p class="amet_text">This section is confirming the state. you can edit the value. </p>
@@ -59,16 +74,46 @@
             <div class="col-md-6 padding_left_0" style="padding-left: 0px;">
               <div class="mail_section">
                 <div class="form-group row">
-                  <label for="findidplace"  class="col-sm-2 col-form-label">Place</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" id="findidplace" value="home">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="findidroomarea" style="padding: 0;padding-top: 10px;" class="col-sm-2 col-form-label">Room Area</label>
+                  <label for="findidroomarea" style="padding: 0;padding-top: 10px;" class="col-sm-2 col-form-label">Room Area (Sqrt)</label>
                   <div class="col-sm-10">
                     <input type="text" class="form-control" id="findidroomarea" value="0">
                   </div>
+                </div>
+                <div class="slide-container">
+                  <label for="customRange3">Estimate the percent of floor space occupied by items such as furniture, equipment, displays, etc.</label>
+                  <input type="range" class="floor-space-range" min="0" max="100" step="1" id="floor-space-range">
+                  <p>Value: <span id="space-range"></span></p>
+                </div>
+                <div class = "calculator-people">
+                  <div class="calculator-element-label">
+                    <h2>Total number of people</h2>
+                  </div>
+                  <div class="calculator-element-value">
+                    
+                      <input type="text" style="width:100%" class="form-control" id="calculator-people-value" value="0">
+                    
+                  </div>
+                </div>
+                <div class="form-group">
+                  <h2 style="margin-top:2%;">Ventilation Cycle</h2>
+                  <select class="form-control" id="exampleFormControlSelect1">
+                    <option>1H</option>
+                    <option>2H</option>
+                    <option>3H</option>
+                    <option>4H</option>
+                    <option>5H</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <h2 style="margin-top:2%;">Window open time</h2>
+                  <select class="form-control" id="exampleFormControlSelect1">
+                    <option>10M</option>
+                    <option>20M</option>
+                    <option>30M</option>
+                    <option>40M</option>
+                    <option>50M</option>
+                  </select>
                 </div>
                 <div class="send_bt" style="margin-left: 40%;"><a href="main.html">confirm</a></div>
               </div>
@@ -82,20 +127,36 @@
     <!-- contact section end -->
     <!-- Javascript files-->
     <script>
+      var slider = document.getElementById("floor-space-range");
+      var range_output = document.getElementById("space-range");
+      range_output.innerHTML = slider.value;
+  
+      slider.oninput = function(){
+        range_output.innerHTML = this.value;
+        var space_value = this.value*1;
+        area*=1;
+        //console.log(space_value,area);
+        var cal = Math.round((area*(1-(space_value/100))/144)*100/100); //최종계산식
+        //console.log(cal);
+        socket.emit('calculator-person',{'area':area,'space_value':space_value})
+      }
+    </script>
+    <script>
         document.getElementById("findidplace").value = place;
         document.getElementById("findidroomarea").value = area;
       
     </script>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/jquery-3.0.0.min.js"></script>
-    <script src="js/plugin.js"></script>
-    <!-- sidebar -->
-    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="js/custom.js"></script>
-    <!-- javascript --> 
-    <script src="js/owl.carousel.js"></script>
-    <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script> 
-</body>
+    
+    <!-- 최종인원 계산식 -->
+    <script>
+      socket.on('calculator-person',(data)=>{
+        document.getElementById("calculator-people-value").value=data['max_person'];
+
+      });
+      //socket.emit('calculator-person',{'area':area,'space_value':space_value});
+
+      //var cal_output = document.getElementById("calculator-people-value");
+    
+    </script>
+    </body>
 </html>
