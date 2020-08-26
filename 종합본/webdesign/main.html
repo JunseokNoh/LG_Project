@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- basic -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- mobile metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+<!-- site metas -->
+<title>Services</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="author" content=""> 
+<!-- bootstrap css -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<!-- style css -->
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<!-- Responsive-->
+<link rel="stylesheet" href="css/responsive.css">
+<!-- fevicon -->
+<link rel="icon" href="images/fevicon.png" type="image/gif" />
+<!-- Scrollbar Custom CSS -->
+<link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+<!-- Tweaks for older IEs-->
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<!-- owl stylesheets --> 
+<link rel="stylesheet" href="css/owl.carousel.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/plugins/venn.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+<script>
+  var current_number=0;
+  var total_number= 0;
+  var degree=0;
+  var weather="sunny";
+  var weather_ic="";
+  var out_aqi=0;
+
+  //var ventilation_cycle="15m";
+  //var last_ventilation="21:55:20";
+  //var finedust = 20;
+  // window.onload = function(){
+  //     const socket = io.connect("http://localhost:8080");
+      
+  //     socket.on('connect',()=>{
+  //       socket.emit('confirm_connect',{'client_confirm':'connect_success'});
+  //     })
+    const socket = io.connect("http://localhost:8080");
+    socket.emit('main_connect',{'main' : 'main.html_success'});
+    socket.on('main_default_value',(data)=>{
+       current_number=data['current_number']
+       total_number=data['total_number']
+      degree=data['tp']
+      weather_ic=data['weather_ic']
+       out_aqi=data['out_aqi']
+      
+     console.log(current_number,total_number,degree,weather_ic,out_aqi)
+    document.getElementById("degree").innerHTML = degree+"º";
+    document.getElementById("people_state").innerHTML=current_number + "/"+total_number;
+    document.getElementById("aqi").innerHTML=out_aqi + "/"+out_aqi;
+    
+    document.getElementById("weather_img").src="images/"+weather_ic+".png";
+    console.log("image/"+weather_ic+".png");
+    });
+     
+ 
+
+  //}
+</script>
+<style>
+  #chartdiv {
+    width: 100%;
+    height: 300px;
+  }
+  </style>
+
+<script>
+
+  am4core.ready(function() {
+  
+  // Themes begin
+  am4core.useTheme(am4themes_animated);
+  // Themes end
+  
+  var capacity = total_number;
+  var value = current_number;
+  var circleSize = 0.8;
+  
+  var component = am4core.create("chartdiv", am4core.Container)
+  component.width = am4core.percent(100);
+  component.height = am4core.percent(100);
+  
+  var chartContainer = component.createChild(am4core.Container);
+  chartContainer.x = am4core.percent(50)
+  chartContainer.y = am4core.percent(50)
+  
+  var circle = chartContainer.createChild(am4core.Circle);
+  circle.fill = am4core.color("#dadada");
+  
+  var circleMask = chartContainer.createChild(am4core.Circle);
+  
+  var waves = chartContainer.createChild(am4core.WavedRectangle);
+  waves.fill = am4core.color("#34a4eb");
+  waves.mask = circleMask;
+  waves.horizontalCenter = "middle";
+  waves.waveHeight = 10;
+  waves.waveLength = 30;
+  waves.y = 500;
+  circleMask.y = -500;
+  
+  component.events.on("maxsizechanged", function(){
+    var smallerSize = Math.min(component.pixelWidth, component.pixelHeight);  
+    var radius = smallerSize * circleSize / 2;
+  
+    circle.radius = radius;
+    circleMask.radius = radius;
+    waves.height = smallerSize;
+    waves.width = Math.max(component.pixelWidth, component.pixelHeight);  
+  
+    //capacityLabel.y = radius;
+  
+    var labelRadius = radius + 20
+  
+    capacityLabel.path = am4core.path.moveTo({x:-labelRadius, y:0}) + am4core.path.arcToPoint({x:labelRadius, y:0}, labelRadius, labelRadius);
+    capacityLabel.locationOnPath = 0.5;
+  
+    setValue(value);
+  })
+  
+  
+  function setValue(value){
+    var y = - circle.radius - waves.waveHeight + (1 - value / capacity) * circle.pixelRadius * 2;
+    waves.animate([{property:"y", to:y}, {property:"waveHeight", to:10, from:15}, {property:"x", from:-50, to:0}], 5000, am4core.ease.elasticOut);
+    circleMask.animate([{property:"y", to:-y},{property:"x", from:50, to:0}], 5000, am4core.ease.elasticOut);
+  }
+  
+  
+  var label = chartContainer.createChild(am4core.Label)
+  var formattedValue = component.numberFormatter.format(value, "#.#a");
+  formattedValue = formattedValue.toUpperCase();
+  
+  label.text = formattedValue + " People";
+  label.fill = am4core.color("#fff");
+  label.fontSize = 30;
+  label.horizontalCenter = "middle";
+  
+  
+  var capacityLabel = chartContainer.createChild(am4core.Label)
+  
+  var formattedCapacity = component.numberFormatter.format(capacity, "#.#a").toUpperCase();;
+  
+  capacityLabel.text = "current " + formattedCapacity + " People";
+  capacityLabel.fill = am4core.color("#34a4eb");
+  capacityLabel.fontSize = 20;
+  capacityLabel.textAlign = "middle";
+  capacityLabel.padding(0,0,0,0);
+
+  if(value>capacity*0.8){
+    waves.fill = am4core.color("#eb4934");
+    capacityLabel.fill = am4core.color("#eb4934");
+  }
+  else if(value>capacity*0.5){
+    waves.fill = am4core.color("#ebdf34");
+    capacityLabel.fill = am4core.color("#ebdf34");
+  }
+  else{
+    waves.fill = am4core.color("#49eb34");
+    capacityLabel.fill = am4core.color("#49eb34");
+  }
+  
+  
+  }); // end am4core.ready()
+  </script>
+
+</head>
+<body>
+  <!--header section start -->
+    <div class="header_section header_bg">
+      <nav style="padding: .5rem 1rem;">
+        <div class="logo"><a href="index.html"><img src="images/logo2.png"></a></div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="logo" style="float:right;"><img onclick="location.href='confirm.html';" style="margin-bottom:1rem;height:50px;width:50px;float:right;" src="images/setting.png"></div>
+
+
+      </nav>
+    </div>
+    <!--header section end -->
+    <!--services section start -->
+    <div class="what_we_do_section layout_padding" style="padding-top:50px;height:600px;background-image: url(images/services-bg.png);">
+      
+        <h1 class="what_taital">Current State</h1>
+        <p class="what_text">Check current state of the room</p>
+        
+        <div class="what_we_do_section_2" style="left:10px;width:50%">
+          <div class="row" style="justify-content: center;margin-bottom: 3%;">
+            <div class="col-lg-3 col-sm-6">
+              <div class="box_main people_box" onclick="send(this)" value="home">
+                <div class="icon_1">
+                  <h1 style=" font-size:300%;color:aliceblue"id="people_state"> 
+                    <!-- <script>document.write(current_number);</script>
+                    /<script>document.write(total_number);</script> -->
+                  </h1>
+                </div>
+                <h3 class="accounting_text">Current People<br>/max people</h3>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+              <div class="box_main last_ventilation_box" onclick="send(this)" value="school">
+                <div class="icon_1">
+                  <h1 style=" font-size:300%;color:aliceblue;" id ="h1_ventilation">
+                  <!-- <script>document.write(last_ventilation);</script> -->
+                </h1>
+              </div>
+                <h3 class="accounting_text">last ventilation</h3>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="justify-content: center;">
+            <div class="col-lg-3 col-sm-6">
+              <div class="box_main AQI_box" onclick="send(this)" value="company">
+                <div class="icon_1" style="padding-bottom: 18%;">
+                  <h1 style=" font-size:300%;color:aliceblue" id="aqi">
+                    <!-- <script>document.write(out_aqi);</script>
+                    /
+                    <script>document.write(out_aqi);</script> -->
+                  </h1></div>
+                <h3 class="accounting_text">External AQI<br>/Internal AQI</h3>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+              <div class="box_main weather_box" onclick="send(this)" value="school">
+                <div class="icon_1" style="">
+                  <img style="height:30%;width:30%;" src="" id="weather_img">
+                  <h1 style=" font-size:300%;color:aliceblue" id ="degree">
+                    <!-- <script>document.write(degree_func());
+                    </script> -->
+                    </h1>
+                  </div>
+                <h3 class="accounting_text">weather</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="chartdiv" style="position: absolute; left: 68%; top: 36%;width:450px;"></div>
+        <div style="position: absolute; left: 52%; top: 40%;"><img id="windowopen" onclick="windowchange(this)" style="height:50%;width:50%;" src="images/dooropen.png"></div>
+      
+    </div>
+    <!--services section end -->
+    <script>
+     
+      function windowchange(img){
+        if(img.id=="windowopen"){
+          img.src = "images/doorclose.png"
+          img.id = "windowclose"
+          document.getElementById('stateh').innerHTML = 'close';
+        }
+        else{
+          img.src = "images/dooropen.png"
+          img.id = "windowopen"
+          document.getElementById('stateh').innerHTML = 'open';
+        }
+      }
+    </script>
+    
+    </body>
+</html>

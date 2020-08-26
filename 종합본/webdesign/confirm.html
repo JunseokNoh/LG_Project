@@ -40,18 +40,18 @@
   //       socket.emit('confirm_connect',{'client_confirm':'connect_success'});
   //     })
     const socket = io.connect("http://localhost:8080");
-    socket.emit('confirm_connect',{'client_confirm' : 'connect_success'});
+    socket.emit('confirm_connect',{'confirm' : 'confirm.html_success'});
 
   //}
 </script>
 </head>
 <body>
-  <script>
+  <!-- <script>
     temp = location.href.split("?");
     data=temp[1].split(":");
     place = data[0];
     area = data[1];
-  </script>
+  </script> -->
  
   <!--header section start -->
   <div class="header_section header_bg">
@@ -82,7 +82,7 @@
                 <div class="form-group row">
                   <label for="findidroomarea" style="padding: 0;padding-top: 10px;" class="col-sm-2 col-form-label">Room Area (Sqrt)</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" id="findidroomarea" value="0">
+                    <input type="text" class="form-control" id="findidroomarea" oninput ="area_function()" value="0">
                   </div>
                 </div>
                 <div class="slide-container">
@@ -95,14 +95,36 @@
                     <h2>Total number of people</h2>
                   </div>
                   <div class="calculator-element-value">
-                    <div class="col-sm-10">
+                    
                       <input type="text" class="form-control" id="calculator-people-value" value="0">
-                    </div>
                    
                   </div>
-                  
                 </div>
-                <div class="send_bt" style="margin-left: 40%;"><a href="#">confirm</a></div>
+                <div class="form-group">
+                  <h2 style="margin-top:2%;">Ventilation Cycle</h2>
+                  <select class="form-control" id="ventilation_cycle">
+                    <option>1H</option>
+                    <option>2H</option>
+                    <option>3H</option>
+                    <option>4H</option>
+                    <option>5H</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <h2 style="margin-top:2%;">Window open time</h2>
+                  <select class="form-control" id="ventilation_open_time" >
+                    <option>5M</option>
+                    <option>10M</option>
+                    <option>15M</option>
+                    <option>20M</option>
+                    <option>25M</option>
+                    <option>30M</option>
+                    
+                  </select>
+                </div>
+               
+                <div class="send_bt" style="margin-left: 40%;" onclick="main_function()"><a href="main.html">confirm</a></div>
               </div>
             </div>
             
@@ -114,6 +136,28 @@
     <!-- contact section end -->
     <!-- Javascript files-->
     <script>
+        //최대인원 
+      function main_function(){
+     
+        var arr1 = document.getElementById("ventilation_cycle").value;
+        var arr2 = document.getElementById("ventilation_open_time").value;
+        var cycle = arr1.split("H");
+        cycle[0]*=1; //환기주기 
+        var open_time = arr2.split("M");
+        open_time[0]*=1; //열려잇는시간
+        console.log(total_number);
+        socket.emit('confirm-button',{'total_number':total_number,'cycle':cycle[0],'open_time':open_time[0]})
+      }
+    </script>
+    <script>
+      var area;
+     function area_function(){
+      area = Math.round(document.getElementById("findidroomarea").value);
+      
+     }
+      
+    </script>
+    <script>
       var slider = document.getElementById("floor-space-range");
       var range_output = document.getElementById("space-range");
       range_output.innerHTML = slider.value;
@@ -123,38 +167,22 @@
         var space_value = this.value*1;
         area*=1;
         //console.log(space_value,area);
-        var cal = Math.round((area*(1-(space_value/100))/144)*100/100); //최종계산식
-        //console.log(cal);
+
         socket.emit('calculator-person',{'area':area,'space_value':space_value})
       }
     </script>
-    <script>
-        document.getElementById("findidplace").value = place;
-        document.getElementById("findidroomarea").value = area;
-      
-    </script>
+
     
     <!-- 최종인원 계산식 -->
     <script>
+     //최종인원이담길변수
+     var total_number;
       socket.on('calculator-person',(data)=>{
         document.getElementById("calculator-people-value").value=data['max_person'];
-
+        total_number = data['max_person'];
+       
       });
-      //socket.emit('calculator-person',{'area':area,'space_value':space_value});
-
-      //var cal_output = document.getElementById("calculator-people-value");
-    
     </script>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/jquery-3.0.0.min.js"></script>
-    <script src="js/plugin.js"></script>
-    <!-- sidebar -->
-    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="js/custom.js"></script>
-    <!-- javascript --> 
-    <script src="js/owl.carousel.js"></script>
-    <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script> 
+  
 </body>
 </html>
