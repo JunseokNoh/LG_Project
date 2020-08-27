@@ -18,6 +18,7 @@ cycle=0 #환기주기
 open_time=0 #환기시간
 tp=0
 out_aqi=0
+place=""
 weather_ic=""
 
 tp = int(air_condition_dic['data']['current']['weather']['tp'])
@@ -70,7 +71,7 @@ def connct_print(sid,json):
 @sio.on('main_connect') # main html 연결성공 메시지 및 메인화면 값전달 
 def connect_print(sid,json):
 	print(json['main'])
-	sio.emit('main_default_value',{'current_number':current_number,'total_number':total_number,'tp':tp,'out_aqi':out_aqi,'weather_ic':weather_ic})
+	sio.emit('main_default_value',{'current_number':current_number,'total_number':total_number,'tp':tp,'out_aqi':out_aqi,'weather_ic':weather_ic,'place':place})
 
 @sio.on('calculator-person')#최대인원 계산 처리 함수 
 def calculator_person(sid,json):
@@ -84,7 +85,9 @@ def confirm_button(sid,json):
 	total_number = json['total_number']
 	cycle = json['cycle']
 	open_time = json['open_time']
-	print('현재인원 ',total_number,cycle,open_time)
+	global place
+	place=json['place']
+	print('현재인원 ',total_number,cycle,open_time,'현재장소',place)
 	
 if __name__== '__main__':
 	eventlet.wsgi.server(eventlet.listen(('localhost',8080)),app)

@@ -495,6 +495,7 @@ button {
     padding: 10px 0px;
     border-radius: 40px;
 }
+
 .moremore_bt_1 a:hover {
     color: #ffffff;
     border: 2px solid #ffffff;
@@ -897,4 +898,9 @@ button {
 }
 .margin_top_90{
   margin-top: 90px;
+}
+
+.fa-smile{
+    color:#ff5a58;
+   
 }

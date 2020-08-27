@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <!-- basic -->
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"/>
+
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -41,7 +45,8 @@
   var weather="sunny";
   var weather_ic="";
   var out_aqi=0;
-
+  var ext_aqi_ic="";
+  var place="";
   //var ventilation_cycle="15m";
   //var last_ventilation="21:55:20";
   //var finedust = 20;
@@ -59,14 +64,33 @@
       degree=data['tp']
       weather_ic=data['weather_ic']
        out_aqi=data['out_aqi']
-      
+      place=data['place']
      console.log(current_number,total_number,degree,weather_ic,out_aqi)
     document.getElementById("degree").innerHTML = degree+"º";
     document.getElementById("people_state").innerHTML=current_number + "/"+total_number;
     document.getElementById("aqi").innerHTML=out_aqi + "/"+out_aqi;
     
     document.getElementById("weather_img").src="images/"+weather_ic+".png";
-    console.log("image/"+weather_ic+".png");
+    if(out_aqi<50)
+    {
+      ext_aqi_ic="ic-face-green"
+    }
+    else if(50<out_aqi<100)
+    {
+      ext_aqi_ic="ic-face-yellow"
+    }
+    else if(100<out_aqi<150)
+    {
+      ext_aqi_ic="ic-face-orange"
+    }
+    else 
+    {
+      ext_aqi_ic="ic-face-red"
+    }
+    //document.getElementById("ext_weather_img").src="images/"+ext_aqi_ic+".svg";
+    document.getElementById("ext_aqi").innerHTML=out_aqi;
+    document.getElementById("what_text").innerHTML="current state of the "+place;
+    
     });
      
  
@@ -197,7 +221,7 @@
     <div class="what_we_do_section layout_padding" style="padding-top:50px;height:600px;background-image: url(images/services-bg.png);">
       
         <h1 class="what_taital">Current State</h1>
-        <p class="what_text">Check current state of the room</p>
+        <p class="what_text" id="what_text"></p>
         
         <div class="what_we_do_section_2" style="left:10px;width:50%">
           <div class="row" style="justify-content: center;margin-bottom: 3%;">
@@ -233,6 +257,20 @@
                     <script>document.write(out_aqi);</script> -->
                   </h1></div>
                 <h3 class="accounting_text">External AQI<br>/Internal AQI</h3>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+              <div class="box_main ext_aqi_box" onclick="send(this)" value="company">
+                <div class="icon_1" style="">
+                  <!--<img style="height:30%;width:30%;" src="" id="ext_weather_img">-->
+                  <i class="far fa-smile fa-5x"></i>
+                  <h1 style=" font-size:300%;color:aliceblue" id="ext_aqi">
+                    <!-- <script>document.write(out_aqi);</script>
+                    /
+                    <script>document.write(out_aqi);</script> -->
+                  </h1>
+                </div>
+                <h3 class="accounting_text">External AQI</h3>
               </div>
             </div>
             <div class="col-lg-3 col-sm-6">
