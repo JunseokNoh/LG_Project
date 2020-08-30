@@ -225,6 +225,7 @@ button {
 .header_section {
     width: 100%;
     float: left;
+    
 }
 .header_bg{
   width: 100%;
@@ -450,12 +451,12 @@ button {
     border-radius: 10px;
     padding: 30px 0px;
 }
-.box_main:hover{
+/* .box_main:hover{
     background-color: #ff5a58;
 }
 .box_main.active {
     background-color: #ff5a58;
-}
+} */
 .icon_1 {
     width: 100%;
     float: left;
@@ -787,12 +788,12 @@ button {
     border-radius: 30px;
 }
 
-.footer_section{
+/* .footer_section{
     width: 100%;
     float: left;
     background-color: #121212;
     height: auto;
-}
+} */
 .about_text{
     width: 100%;
     float: left;
@@ -901,6 +902,15 @@ button {
 }
 
 .fa-smile{
-    color:#ff5a58;
+    color:#22e732;
    
+}
+.fa-meh{
+    color:#e4d60f;
+}
+.fa-frown{
+    color:#fc6a09;
+}
+.fa-sad-tear{
+    color:red;
 }

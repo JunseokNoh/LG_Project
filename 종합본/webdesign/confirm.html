@@ -39,10 +39,38 @@
   //     socket.on('connect',()=>{
   //       socket.emit('confirm_connect',{'client_confirm':'connect_success'});
   //     })
-    const socket = io.connect("http://localhost:8080");
+    const socket = io.connect("http://34.64.236.227:8080");
     socket.emit('confirm_connect',{'confirm' : 'confirm.html_success'});
 
   //}
+</script>
+<script> //confirm초기화면 및 main에서 confirm 돌아올때 
+  var init_place;
+  var room_area;
+  
+  socket.on('init_confirm',(data)=>{
+    document.getElementById("findidplace").value=data['place'];
+    console.log('장소',data['place']);
+    var str_room_area =String(data['room_area'])
+    var space_range=String(data['space_range'])
+    var init_open_time;
+    var init_cycle;
+    document.getElementById("findidroomarea").value=str_room_area;
+    console.log('공크기',str_room_area);
+    console.log('space Value',space_range);
+    document.getElementById("floor-space-range").value=space_range;
+    document.getElementById("space-range").innerHTML=space_range;
+    init_cycle=data['cycle']
+    init_open_time=data['open_time']
+    document.getElementById("ventilation_cycle").value = init_cycle;
+    document.getElementById("ventilation_open_time").value=init_open_time;
+    init_open_time=data['open_time']
+
+    area_function();
+    document.getElementById("calculator-people-value").value=data['total_number'];
+    total_number=data['total_number'];
+    console.log
+  })
 </script>
 </head>
 <body>
@@ -76,13 +104,13 @@
                 <div class="form-group row">
                   <label for="findidplace"  class="col-sm-2 col-form-label">Place</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" id="findidplace" value="home">
+                    <input type="text" class="form-control" id="findidplace" value="">
                   </div>
                 </div>
                 <div class="form-group row">
                   <label for="findidroomarea" style="padding: 0;padding-top: 10px;" class="col-sm-2 col-form-label">Room Area (Sqrt)</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" id="findidroomarea" oninput ="area_function()" value="0">
+                    <input type="text" class="form-control" id="findidroomarea" oninput ="area_function()" value="">
                   </div>
                 </div>
                 <div class="slide-container">
@@ -103,23 +131,23 @@
                 <div class="form-group">
                   <h2 style="margin-top:2%;">Ventilation Cycle</h2>
                   <select class="form-control" id="ventilation_cycle">
-                    <option>1H</option>
-                    <option>2H</option>
-                    <option>3H</option>
-                    <option>4H</option>
-                    <option>5H</option>
+                    <option value="1">1H</option>
+                    <option value="2">2H</option>
+                    <option value="3">3H</option>
+                    <option value="4">4H</option>
+                    <option value="5">5H</option>
                   </select>
                 </div>
 
                 <div class="form-group">
                   <h2 style="margin-top:2%;">Window open time</h2>
-                  <select class="form-control" id="ventilation_open_time" >
-                    <option>5M</option>
-                    <option>10M</option>
-                    <option>15M</option>
-                    <option>20M</option>
-                    <option>25M</option>
-                    <option>30M</option>
+                  <select class="form-control" id="ventilation_open_time">
+                    <option value="5">5M</option>
+                    <option value="10">10M</option>
+                    <option value="15">15M</option>
+                    <option value="20">20M</option>
+                    <option value="25">25M</option>
+                    <option value="30">30M</option>
                     
                   </select>
                 </div>
@@ -137,18 +165,22 @@
     <!-- Javascript files-->
     <script>
         //최대인원 
+        function cycle_function(){
+
+        }
       function main_function(){
      
-        var arr1 = document.getElementById("ventilation_cycle").value;
-        var arr2 = document.getElementById("ventilation_open_time").value;
-        var cycle = arr1.split("H");
-        cycle[0]*=1; //환기주기 
-        var open_time = arr2.split("M");
-        open_time[0]*=1; //열려잇는시간
+        var cycle = document.getElementById("ventilation_cycle").value;
+        var open_time = document.getElementById("ventilation_open_time").value;
+        //console.log('arr1 arr2',arr1,arr2);
+        //var cycle = arr1.split("H");
+        //cycle[0]*=1; //환기주기 
+       // var open_time = arr2.split("M");
+        //open_time[0]*=1; //열려잇는시간
         console.log(total_number);
         var place = document.getElementById("findidplace").value;
         console.log(place);
-        socket.emit('confirm-button',{'total_number':total_number,'cycle':cycle[0],'open_time':open_time[0],'place':place})
+        socket.emit('confirm-button',{'total_number':total_number,'cycle':cycle,'open_time':open_time,'place':place})
         
       }
     </script>
