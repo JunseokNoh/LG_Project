@@ -45,7 +45,21 @@ def connect(sid, environ):
 @sio.event
 def disconnect(sid):
 	print('disconnect ', sid)
-
+@sio.event
+def call_api(sid,data): #창문이 닫힐때마다 api 호출 
+	global air_condition_url
+	air_page = urllib.request.urlopen(air_condition_url)
+	global air_condition_dic
+	air_condition_dic = json.loads(air_page.read())
+	#print(air_condition_dic)
+	global tp
+	tp = int(air_condition_dic['data']['current']['weather']['tp'])
+	global out_aqi
+	out_aqi = int(air_condition_dic['data']['current']['pollution']['aqius'])
+	global weather_ic
+	weather_ic=air_condition_dic['data']['current']['weather']['ic']
+	sio.emit('ref_weather',{'tp':tp,'out_aqi':out_aqi,'weather_ic':weather_ic})
+	print('날씨 api 호출 완료 ',tp,out_aqi,weather_ic)
 # @sio.on('my message',namespace='/chat')
 # def another_event(sid,data):
 # print(str(data))
@@ -108,6 +122,87 @@ def confirm_button(sid,json):
 	global place
 	place=json['place']
 	print('현재인원 ',total_number,cycle,open_time,'현재장소',place)
+
+@sio.on('in_aqi')
+def calculator_aqi(sid,json):
+	pm = json['pm'] #미세먼지
+	co = json['co'] #일산화탄소
+	co_hi=0#지수구분
+	co_lo=0
+	co_bp_hi=0.0#농도구분
+	co_bp_lo=0.0
+
+	pm_hi=0# 지수구분
+	pm_lo=0
+	pm_bp_hi=0 #농도구분
+	pm_bp_lo=0
+
+	Ip=0.0
+	if co<=2:
+		co_hi=50
+		co_lo=0
+		co_bp_hi=2
+		co_bp_lo=0
+	elif co>=2.01 and co<=9:
+		co_hi=100
+		co_lo=51
+		co_bp_hi=9
+		co_bp_lo=2.01
+	elif co>=9.01 and co<=15:
+		co_hi=250
+		co_lo = 101
+		co_bp_hi=15
+		co_bp_lo=9.01
+	else:
+		co_hi = 500
+		co_lo = 251
+		co_bp_hi=50
+		co_bp_lo=15.01
+	if int(pm)<=15:
+		pm_hi=50
+		pm_lo=0
+		pm_bp_hi=15
+		pm_bp_lo=0
+	elif int(pm)>=16 and int(pm)<=35:
+		pm_hi = 100
+		pm_lo = 51
+		pm_bp_hi=35
+		pm_bp_lo=16
+	elif int(pm)>=36 and int(pm)<=75:
+		pm_hi=250
+		pm_lo=101
+		pm_bp_hi=75
+		pm_bp_lo=36
+	else:
+		pm_hi=500
+		pm_lo=251
+		pm_bp_hi=500
+		pm_bp_lo=76
+	if pm_hi>=250 and co_hi>=250:#둘다 나쁨 이상일경우
+		if co_hi>pm_hi:#co가 매우나쁨일경우
+			Ip=(((co_hi-co_lo)/(co_bp_hi-co_bp_lo))*(co-co_bp_lo)+co_lo)
+			Ip+=50
+		else: #아닐경우 미세먼지로 계산 
+			Ip=((pm_hi-pm_lo)/(pm_bp_hi-pm_bp_lo))*(pm-pm_bp_lo)+pm_lo
+			Ip+=50
+	elif co_hi > pm_hi: #일산화탄소가 더 오염됐을경우 
+		Ip=(((co_hi-co_lo)/(co_bp_hi-co_bp_lo))*(co-co_bp_lo)+co_lo)
+	else: #둘다 나쁨이아닐경우는 미세먼지로 계산
+		Ip=(((pm_hi-pm_lo)/(pm_bp_hi-pm_bp_lo))*(pm-pm_bp_lo)+pm_lo)
+	
+	Ip=round(Ip)
+	print('실내공기상태 : ',Ip)
+	#보내주면끝
+
+
+		
+		 
+
+
+			
+
+
+			
 @sio.on('return_to_confirm')#main에서 confirm으로 돌아가는 설정 처리 
 def return_confirm(sid,json):
 	sio.emit('init_confirm',{'place':place,'room_area':room_area,'space_range':space_range,'cycle':cycle,'open_time':open_time,'total_number':total_number})
