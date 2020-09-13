@@ -2,6 +2,7 @@ import socketio
 import eventlet
 import json
 import urllib.request
+import time
 #create a Socket.IO server
 sio = socketio.Server(cors_allowed_origins='*')
 app = socketio.WSGIApp(sio)
@@ -11,7 +12,7 @@ air_condition_url="http://api.airvisual.com/v2/nearest_city?key=d459ec55-5797-44
 air_page = urllib.request.urlopen(air_condition_url) #url을 여는 함수 
 air_condition_dic = json.loads(air_page.read()) #url을 열어서 json을 읽어와 Dic 형태로 저장 
 #!!!!!!해야할것
-# 현재인원 들어올시 처리 해야함 api 주기적으로 불러서 처리해야함 
+# 현재인원 들어올시 처리 해야함 
 #비오면 창문 안열리게 하기
 
 #필요한 변수들 선언
@@ -42,6 +43,9 @@ print(tp,out_aqi,weather_ic)
 def connect(sid, environ):
 	print('connect ', sid)
 
+
+	
+
 @sio.event
 def disconnect(sid):
 	print('disconnect ', sid)
@@ -70,15 +74,22 @@ def test(sid,json):
 	#print('sid정보',sid)
 	#print('현재 들어오는 인원 : ',json['key'])
 	current_number=json['key']
-	if json['key'] == -5:
-		value=1
-		sio.emit('open_window',{'key':value})
-		print('success send to open window')
-	elif json['key'] ==-10:
-		value = 2
-		sio.emit('open_window',{'key':value})
-		print('success send to close window')
+	sio.emit('current_number',{'key':current_number})
+	# if json['key'] == -5:
+	# 	value=1
+	# 	sio.emit('open_window',{'key':value})
+	# 	print('success send to open window')
+	# elif json['key'] ==-10:
+	# 	value = 2
+	# 	sio.emit('open_window',{'key':value})
+	# 	print('success send to close window')
 	
+@sio.on('control_the_window_plz') #main으로부터 창문 통제 제어받음 
+def control(sid,json):
+	if json['value'] ==0: #0이오면 창문을 닫아달라
+		sio.emit('to_window',{'value':0})
+	elif json['value']==1:#1이오면 창문을 열어달라 
+		sio.emit('to_window',{'value':1})
 
 @sio.on('index_connect') #index.html연결 성공 메시지
 def connect_print(sid,json):
@@ -94,7 +105,7 @@ def connct_print(sid,json):
 @sio.on('main_connect') # main html 연결성공 메시지 및 메인화면 값전달 
 def connect_print(sid,json):
 	print(json['main'])
-	sio.emit('main_default_value',{'open_time':int_open_time,'current_number':current_number,'total_number':total_number,'tp':tp,'out_aqi':out_aqi,'weather_ic':weather_ic,'place':place,'window_state':window_state})
+	sio.emit('main_default_value',{'open_time':int_open_time,'current_number':current_number,'total_number':total_number,'tp':tp,'out_aqi':out_aqi,'weather_ic':weather_ic,'place':place,'window_state':window_state,'open_cycle':int_cycle})
 
 @sio.on('calculator-person')#최대인원 계산 처리 함수 
 def calculator_person(sid,json):
@@ -208,3 +219,4 @@ def return_confirm(sid,json):
 	sio.emit('init_confirm',{'place':place,'room_area':room_area,'space_range':space_range,'cycle':cycle,'open_time':open_time,'total_number':total_number})
 if __name__== '__main__':
 	eventlet.wsgi.server(eventlet.listen(('10.178.0.2',8080)),app)
+
