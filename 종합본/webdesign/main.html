@@ -49,6 +49,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
   var place="";
   var window_state=0;
   var open_time=0;
+  var open_cycle=0;
+  var open_window_flag=true 
   //var ventilation_cycle="15m";
   //var last_ventilation="21:55:20";
   //var finedust = 20;
@@ -66,6 +68,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
       document.getElementById("degree").innerHTML = degree+"º";
       document.getElementById("ext_aqi").innerHTML=out_aqi;
       document.getElementById("weather_img").src="images/"+weather_ic+".png";
+      if(weather_ic=='09d'|| weather_ic=='09n'||weather_ic=='10d'||weather_ic=='10n'||weather_ic=='13d'||weather_ic=='13n'||weather_ic=='11d'||weather_ic=='11n')
+      {
+        open_window_flag=false //창문 오픈 불가능하게 만듬
+      }
+      else{
+        open_window_flag=true //창문오픈 가능하게 만듬 
+      }
     if(out_aqi<50)
     {
       document.getElementById("ext_aqi_face").className="far fa-smile fa-5x";
@@ -91,19 +100,27 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
     });
     socket.emit('main_connect',{'main' : 'main.html_success'});
     socket.on('main_default_value',(data)=>{
-       current_number=data['current_number']
-       total_number=data['total_number']
+      current_number=data['current_number']
+      total_number=data['total_number']
       degree=data['tp']
       weather_ic=data['weather_ic']
        out_aqi=data['out_aqi']
       place=data['place']
+      open_cycle=data['open_cycle']
+      console.log('창문여는Cycle',open_cycle)
       window_state=data['window_state']
       open_time=data['open_time']
      console.log(current_number,total_number,degree,weather_ic,out_aqi)
     document.getElementById("degree").innerHTML = degree+"º";
     document.getElementById("cur_people_state").innerHTML=current_number;
     document.getElementById("max_people_state").innerHTML=total_number;
-    
+    if(weather_ic=='09d'|| weather_ic=='09n'||weather_ic=='10d'||weather_ic=='10n'||weather_ic=='13d'||weather_ic=='13n'||weather_ic=='11d'||weather_ic=='11n')
+      {
+        open_window_flag=false //창문 오픈 불가능하게 만듬
+      }
+      else{
+        open_window_flag=true //창문오픈 가능하게 만듬 
+      }
     document.getElementById("h1_ventilation").innerHTML="00:00";
     if(window_state==1) //문이열려있을때 
     {
@@ -115,6 +132,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
     {
       document.getElementById("window_img").src="images/CLOSE.png";
       document.getElementById("window_img").value="0";
+      
     }
   
     document.getElementById("weather_img").src="images/"+weather_ic+".png";
@@ -143,11 +161,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
     document.getElementById("int_aqi").innerHTML=out_aqi; //추후에 int_aqi 실내 공기질로 교체 해야함 
     document.getElementById("what_text").innerHTML="current state of the "+place;
     
+   
     });
      
- 
+    
 
   //}
+
 </script>
 <style>
   #chartdiv {
@@ -156,7 +176,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
   }
   </style>
 
-<script>
+<!-- <script>
 
   am4core.ready(function() {
   
@@ -252,7 +272,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
   
   
   }); // end am4core.ready()
-  </script>
+  </script> -->
 
 </head>
 <body>
@@ -270,19 +290,18 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
     </div>
     <!--header section end -->
     <!--services section start -->
-    <div class="what_we_do_section layout_padding" style="padding-top:50px;height:600px;background-image: url(images/services-bg.png);">
+    <div class="main_body_section" style="padding-top:50px;height:600px;">
       
         <h1 class="what_taital">Current State</h1>
         <p class="what_text" id="what_text"></p>
         
-        <div class="what_we_do_section_2" style="left:10px;width:50%">
+        <div class="information_row_all" style="left:10px;width:50%">
           <div class="row" style="justify-content: center;margin-top: 10%; margin-bottom: 10%;">
             <div class="col-lg-3 col-sm-6">
               <div class="box_main cur_people_box" >
                 <div class="icon_1">
                   <h1 style=" font-size:300%;color:aliceblue"id="cur_people_state"> 
-                    <!-- <script>document.write(current_number);</script>
-                    /<script>document.write(total_number);</script> -->
+
                   </h1>
                 </div>
                 <h3 class="accounting_text">Current People</h3>
@@ -291,9 +310,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
             <div class="col-lg-3 col-sm-6">
               <div class="box_main max_people_box" >
                 <div class="icon_1">
-                  <h1 style=" font-size:300%;color:aliceblue"id="max_people_state"> 
-                    <!-- <script>document.write(current_number);</script>
-                    /<script>document.write(total_number);</script> -->
+                  <h1 style=" font-size:300%;color:aliceblue"id="max_people_state"value=""> 
+
                   </h1>
                 </div>
                 <h3 class="accounting_text">max people  </h3>
@@ -303,7 +321,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
               <div class="box_main last_ventilation_box" >
                 <div class="icon_1">
                   <h1 style=" font-size:300%;color:aliceblue;" id ="h1_ventilation">
-                  <!-- <script>document.write(last_ventilation);</script> -->
+    
                 </h1>
               </div>
                 <h3 class="accounting_text">last ventilation</h3>
@@ -351,19 +369,20 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
             </div>
           </div>
         </div>
-         <div id="chartdiv" style="position: absolute; left: 68%; top: 36%;width:20%;"></div> 
-        <div style="position: absolute; left: 52%; top: 40%; width:15%;"id="window_graph">
-         
-            <div>
-              <img id="window_img" onclick="windowchange(this)" src="" value=""></img> 
-              <h1 id ="open_timer"style="text-align: center;"></h1>
+         <!--<div id="chartdiv" style="position: absolute; left: 68%; top: 36%;width:20%;"></div> -->
+        <div class="image_all"style="right:10px;width:50%"id="window_graph">
+            <div class="window_div"style="">
+              <div class="window_img_div" id="window_img_div"style="width:70%; height:70%; margin-top:10%;">
+                <img id="window_img" onclick="windowchange(this)" src="" value="" style=""></img>
+               </div>
+              
+              <div class="window_time_div" style="margin-top:20px;">
+              <h1 class="open_timer"id ="open_timer"style="text-align:left; padding-left:15%;"></h1>
+              </div>
             </div>
-        
-         
-          
-      
-      
-            
+            <div class="warning_div">
+              <img id="warning_img" src="images/RED.png" style="width:50%; height:50%;"></img>
+            </div>
         </div>
       
     </div>
@@ -377,21 +396,28 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
  
      
       function windowchange(img){
-        if(img.value=="1"){
+        if(img.value=="1"&& open_window_flag==true ){
           img.src = "images/CLOSE.png"
+          
           //서버로 창문 닫으라는 신호 보내야함 
+          socket.emit('control_the_window_plz',{'value':0})
           clearInterval(x);
           document.getElementById("open_timer").innerHTML="";
+          //document.getElementById("window_img_div").style="width:70%;height:30%;margin-top:10%;";
           img.value = "0"
-          
+          console.log(total_number)
         }
-        else{
+        else if(img.value=="0"&&open_window_flag==true){
           img.src = "images/OPEN.png"
           img.value = "1"
+          //document.getElementById("window_img_div").style="width:70%; height:70%; margin-top:10%;";
+          
           //서버로 창문 열라는 신호 보내야함 
+          socket.emit('control_the_window_plz',{'value':1})
           window_timer();
-         
-         
+        }
+        else if(open_window_flag==false){
+          document.getElementById("open_timer").innerHTML="비가 오기 때문에 창문을 열지 않습니다.";
         }
       }
      
@@ -426,6 +452,62 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
       },1000);
       
       }
+    socket.on('current_number',(data)=>{
+    current_number=data['key'] //서버에서 실시간으로 현재인원을 받아와 화면에 띄워주는 역할 
+    document.getElementById("cur_people_state").innerHTML=current_number;
+    if(current_number>=total_number){
+      document.getElementById("window_img").value=0;
+      windowchange(document.getElementById("window_img"));
+    }
+  })
+  function Auto_open(){
+      console.log('창문 자동 온오프 호출')
+      if(open_cycle==1)
+      {
+        setInterval(function(){
+          if(document.getElementById("window_img").value="0")
+          {
+          windowchange(document.getElementById("window_img"));
+          }
+        },600000);
+      }
+      else if(open_cycle==2){
+        setInterval(function(){
+          if(document.getElementById("window_img").value="0")
+          {
+          windowchange(document.getElementById("window_img"));
+          }
+        },7200000)
+      }
+      else if(open_cycle==3){
+        setInterval(function(){
+          if(document.getElementById("window_img").value="0")
+          {
+          windowchange(document.getElementById("window_img"));
+          }
+        },10800000)
+      }
+      else if(open_cycle==4){
+        setInterval(function(){
+          if(document.getElementById("window_img").value="0")
+          {
+          windowchange(document.getElementById("window_img"));
+          }
+        },14400000)
+      }
+      else if(open_cycle==5){
+        setInterval(function(){
+          if(document.getElementById("window_img").value="0")
+          {
+          windowchange(document.getElementById("window_img"));
+          }
+        },18000000)
+      }
+      
+    
+  }
+  setTimeout(Auto_open,2000)
+
     </script>
     
     </body>

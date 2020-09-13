@@ -439,9 +439,14 @@ button {
     text-align: center;
     margin-top: 0px;
 }
-.what_we_do_section_2{
+.information_row_all{
     width: 100%;
     float: left;
+    margin-top: 40px;
+}
+.image_all{
+    width:100%;
+    float:right;
     margin-top: 40px;
 }
 .box_main {
@@ -486,6 +491,28 @@ button {
     margin-top: 30px;
 }
 
+.window_div{
+    float: left;
+    margin-top:15%;
+    width:40%;
+    
+    
+
+}
+.open_timer{
+    text-align: center;
+    font-size:35px;
+    font-weight: 600;
+    color:#1b5a8d;
+}
+.warning_div{
+    float:right;
+    width:55%;
+    margin-top:15%;
+}
+.main_body_section{
+   
+}
 .moremore_bt_1 a {
     width: 100%;
     float: left;
