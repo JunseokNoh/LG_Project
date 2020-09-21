@@ -13,10 +13,11 @@ air_page = urllib.request.urlopen(air_condition_url) #url을 여는 함수
 air_condition_dic = json.loads(air_page.read()) #url을 열어서 json을 읽어와 Dic 형태로 저장 
 #!!!!!!해야할것
 # 현재인원 들어올시 처리 해야함 
-#비오면 창문 안열리게 하기
+#비오면 창문 안열리게 하기 (처리완료)
+#부저울리게 처리
 
 #필요한 변수들 선언
-current_number=0#현재인원
+current_number=2#현재인원
 total_number=0 #실내공간 허용가능한 최대인원 
 cycle="1" #환기주기
 open_time="5" #환기시간
@@ -42,9 +43,6 @@ print(tp,out_aqi,weather_ic)
 @sio.event
 def connect(sid, environ):
 	print('connect ', sid)
-
-
-	
 
 @sio.event
 def disconnect(sid):
