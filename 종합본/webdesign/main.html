@@ -51,15 +51,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
   var open_time=0;
   var open_cycle=0;
   var open_window_flag=true 
-  //var ventilation_cycle="15m";
-  //var last_ventilation="21:55:20";
-  //var finedust = 20;
-  // window.onload = function(){
-  //     const socket = io.connect("http://localhost:8080");
-      
-  //     socket.on('connect',()=>{
-  //       socket.emit('confirm_connect',{'client_confirm':'connect_success'});
-  //     })
+
+
     const socket = io.connect("http://34.64.236.227:8080");
     socket.on('ref_weather',(data)=>{
       out_aqi=data['out_aqi']
@@ -166,7 +159,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
      
     
 
-  //}
 
 </script>
 <style>
@@ -176,103 +168,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
   }
   </style>
 
-<!-- <script>
-
-  am4core.ready(function() {
-  
-  // Themes begin
-  am4core.useTheme(am4themes_animated);
-  // Themes end
-  
-  var capacity = total_number;
-  var value = current_number;
-  var circleSize = 0.8;
-  
-  var component = am4core.create("chartdiv", am4core.Container)
-  component.width = am4core.percent(100);
-  component.height = am4core.percent(100);
-  
-  var chartContainer = component.createChild(am4core.Container);
-  chartContainer.x = am4core.percent(50)
-  chartContainer.y = am4core.percent(50)
-  
-  var circle = chartContainer.createChild(am4core.Circle);
-  circle.fill = am4core.color("#dadada");
-  
-  var circleMask = chartContainer.createChild(am4core.Circle);
-  
-  var waves = chartContainer.createChild(am4core.WavedRectangle);
-  waves.fill = am4core.color("#34a4eb");
-  waves.mask = circleMask;
-  waves.horizontalCenter = "middle";
-  waves.waveHeight = 10;
-  waves.waveLength = 30;
-  waves.y = 500;
-  circleMask.y = -500;
-  
-  component.events.on("maxsizechanged", function(){
-    var smallerSize = Math.min(component.pixelWidth, component.pixelHeight);  
-    var radius = smallerSize * circleSize / 2;
-  
-    circle.radius = radius;
-    circleMask.radius = radius;
-    waves.height = smallerSize;
-    waves.width = Math.max(component.pixelWidth, component.pixelHeight);  
-  
-    //capacityLabel.y = radius;
-  
-    var labelRadius = radius + 20
-  
-    capacityLabel.path = am4core.path.moveTo({x:-labelRadius, y:0}) + am4core.path.arcToPoint({x:labelRadius, y:0}, labelRadius, labelRadius);
-    capacityLabel.locationOnPath = 0.5;
-  
-    setValue(value);
-  })
-  
-  
-  function setValue(value){
-    var y = - circle.radius - waves.waveHeight + (1 - value / capacity) * circle.pixelRadius * 2;
-    waves.animate([{property:"y", to:y}, {property:"waveHeight", to:10, from:15}, {property:"x", from:-50, to:0}], 5000, am4core.ease.elasticOut);
-    circleMask.animate([{property:"y", to:-y},{property:"x", from:50, to:0}], 5000, am4core.ease.elasticOut);
-  }
-  
-  
-  var label = chartContainer.createChild(am4core.Label)
-  var formattedValue = component.numberFormatter.format(value, "#.#a");
-  formattedValue = formattedValue.toUpperCase();
-  
-  label.text = formattedValue + " People";
-  label.fill = am4core.color("#fff");
-  label.fontSize = 30;
-  label.horizontalCenter = "middle";
-  
-  
-  var capacityLabel = chartContainer.createChild(am4core.Label)
-  
-  var formattedCapacity = component.numberFormatter.format(capacity, "#.#a").toUpperCase();;
-  
-  capacityLabel.text = "current " + formattedCapacity + " People";
-  capacityLabel.fill = am4core.color("#34a4eb");
-  capacityLabel.fontSize = 20;
-  capacityLabel.textAlign = "middle";
-  capacityLabel.padding(0,0,0,0);
-
-  if(value>capacity*0.8){
-    waves.fill = am4core.color("#eb4934");
-    capacityLabel.fill = am4core.color("#eb4934");
-  }
-  else if(value>capacity*0.5){
-    waves.fill = am4core.color("#ebdf34");
-    capacityLabel.fill = am4core.color("#ebdf34");
-  }
-  else{
-    waves.fill = am4core.color("#49eb34");
-    capacityLabel.fill = am4core.color("#49eb34");
-  }
-  
-  
-  }); // end am4core.ready()
-  </script> -->
 
 </head>
 <body>
@@ -388,6 +283,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
     </div>
     <!--services section end -->
     <script>
+      var count_window_flag = true //실내인원계산을통해 창문열때 플래그
       var x;
       function return_to_confirm(){
         socket.emit('return_to_confirm',{'return':1})
@@ -445,6 +341,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
           document.getElementById("open_timer").innerHTML="";
           socket.emit('call_api',{'call':1})
             clearInterval(x);
+            count_window_flag=true
           }
         
        
@@ -456,8 +353,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
     current_number=data['key'] //서버에서 실시간으로 현재인원을 받아와 화면에 띄워주는 역할 
     document.getElementById("cur_people_state").innerHTML=current_number;
     if(current_number>=total_number){
-      document.getElementById("window_img").value=0;
-      windowchange(document.getElementById("window_img"));
+      if(count_window_flag==true)
+      {
+        count_window_flag=false
+        document.getElementById("window_img").value=0;
+        windowchange(document.getElementById("window_img"));
+      }
     }
   })
   function Auto_open(){
