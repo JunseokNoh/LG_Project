@@ -225,6 +225,7 @@ button {
 .header_section {
     width: 100%;
     float: left;
+    
 }
 .header_bg{
   width: 100%;
@@ -438,9 +439,14 @@ button {
     text-align: center;
     margin-top: 0px;
 }
-.what_we_do_section_2{
+.information_row_all{
     width: 100%;
     float: left;
+    margin-top: 40px;
+}
+.image_all{
+    width:100%;
+    float:right;
     margin-top: 40px;
 }
 .box_main {
@@ -450,12 +456,12 @@ button {
     border-radius: 10px;
     padding: 30px 0px;
 }
-.box_main:hover{
+/* .box_main:hover{
     background-color: #ff5a58;
 }
 .box_main.active {
     background-color: #ff5a58;
-}
+} */
 .icon_1 {
     width: 100%;
     float: left;
@@ -485,6 +491,28 @@ button {
     margin-top: 30px;
 }
 
+.window_div{
+    float: left;
+    margin-top:15%;
+    width:40%;
+    
+    
+
+}
+.open_timer{
+    text-align: center;
+    font-size:35px;
+    font-weight: 600;
+    color:#1b5a8d;
+}
+.warning_div{
+    float:right;
+    width:55%;
+    margin-top:15%;
+}
+.main_body_section{
+   
+}
 .moremore_bt_1 a {
     width: 100%;
     float: left;
@@ -495,6 +523,7 @@ button {
     padding: 10px 0px;
     border-radius: 40px;
 }
+
 .moremore_bt_1 a:hover {
     color: #ffffff;
     border: 2px solid #ffffff;
@@ -786,12 +815,12 @@ button {
     border-radius: 30px;
 }
 
-.footer_section{
+/* .footer_section{
     width: 100%;
     float: left;
     background-color: #121212;
     height: auto;
-}
+} */
 .about_text{
     width: 100%;
     float: left;
@@ -897,4 +926,18 @@ button {
 }
 .margin_top_90{
   margin-top: 90px;
+}
+
+.fa-smile{
+    color:#22e732;
+   
+}
+.fa-meh{
+    color:#e4d60f;
+}
+.fa-frown{
+    color:#fc6a09;
+}
+.fa-sad-tear{
+    color:red;
 }

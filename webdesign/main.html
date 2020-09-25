@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <!-- basic -->
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -33,6 +37,216 @@
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/plugins/venn.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+<script>
+  //실내외 공기상태 비교후 창문 여는거 구현해야함, 인원 계산식에따른 부저음 울리는 기능과 이미지 처리 해야함 
+  var current_number=0;
+  var total_number= 0;
+  var degree=0;
+  var weather="sunny";
+  var weather_ic="";
+  var out_aqi=0;
+  var in_aqi=0;
+  var ext_aqi_ic="";
+  var place="";
+  var window_state=0;
+  var open_time=0;
+  var open_cycle=0;
+  var open_window_flag=true 
+  var distance_number=0;
+  var api_call_url = "http://api.airvisual.com/v2/nearest_city?key=d459ec55-5797-44d9-a8ef-136efc7d1d7c"
+    function apicall(){
+      $.ajax({
+        type:"GET",
+        url:api_call_url,
+        dataType:"json",
+        success:function(data){
+          if(data){
+            //console.log("추출데이터",data)
+            console.log("지역",data.data.city)
+            degree=data.data.current.weather.tp //온도
+            //console.log("온도",degree)
+            weather_ic=data.data.current.weather.ic //날씨아이콘
+            //console.log("날씨아이콘",weather_ic)
+            out_aqi=data.data.current.pollution.aqius //바깥공기질
+            
+            //console.log("바깥 공기질",out_aqi)
+            document.getElementById("degree").innerHTML = degree+"º";
+            if(weather_ic=='09d'|| weather_ic=='09n'||weather_ic=='10d'||weather_ic=='10n'||weather_ic=='13d'||weather_ic=='13n'||weather_ic=='11d'||weather_ic=='11n')
+              {
+                  open_window_flag=false //창문 오픈 불가능하게 만듬
+              }
+            else{
+                  open_window_flag=true //창문오픈 가능하게 만듬 
+                }
+                document.getElementById("weather_img").src="images/"+weather_ic+".png";
+            if(out_aqi<50)
+            {
+              document.getElementById("ext_aqi_face").className="far fa-smile fa-5x";
+              //document.getElementById("int_aqi_face").className="far fa-smile fa-5x";
+            }
+            else if(50<out_aqi<100)
+            {
+              document.getElementById("ext_aqi_face").className="far fa-meh fa-5x";
+              //document.getElementById("int_aqi_face").className="far fa-meh fa-5x";
+            
+            }
+            else if(100<out_aqi<150)
+            {
+              document.getElementById("ext_aqi_face").className="far fa-frown fa-5x";
+              
+            }
+            else if(out_aqi>=150)
+            {
+              document.getElementById("ext_aqi_face").className="far fa-sad-tear fa-5x";
+            }
+            
+            document.getElementById("ext_aqi").innerHTML=out_aqi;
+              
+              }
+          else{
+            console.log("api호출 실패")
+          }
+        }
+      })
+    };
+    const socket = io.connect("http://34.64.236.227:8080");
+    // socket.on('ref_weather',(data)=>{
+    //   out_aqi=data['out_aqi']
+    //   degree=data['tp']
+    //   weather_ic=data['weather_ic']
+    //   document.getElementById("degree").innerHTML = degree+"º";
+    //   document.getElementById("ext_aqi").innerHTML=out_aqi;
+    //   document.getElementById("weather_img").src="images/"+weather_ic+".png";
+    //   if(weather_ic=='09d'|| weather_ic=='09n'||weather_ic=='10d'||weather_ic=='10n'||weather_ic=='13d'||weather_ic=='13n'||weather_ic=='11d'||weather_ic=='11n')
+    //   {
+    //     open_window_flag=false //창문 오픈 불가능하게 만듬
+    //   }
+    //   else{
+    //     open_window_flag=true //창문오픈 가능하게 만듬 
+    //   }
+    // if(out_aqi<50)
+    // {
+    //   document.getElementById("ext_aqi_face").className="far fa-smile fa-5x";
+    //   document.getElementById("int_aqi_face").className="far fa-smile fa-5x";
+    // }
+    // else if(50<out_aqi<100)
+    // {
+    //    document.getElementById("ext_aqi_face").className="far fa-meh fa-5x";
+    //    document.getElementById("int_aqi_face").className="far fa-meh fa-5x";
+     
+    // }
+    // else if(100<out_aqi<150)
+    // {
+    //   document.getElementById("ext_aqi_face").className="far fa-frown fa-5x";
+      
+    // }
+    // else 
+    // {
+    //   document.getElementById("ext_aqi_face").className="far fa-sad-tear fa-5x";
+    // }
+
+
+    // });
+    socket.emit('main_connect',{'main' : 'main.html_success'});
+    socket.on('main_default_value',(data)=>{
+      apicall();
+      current_number=data['current_number']
+      total_number=data['total_number']
+      // degree=data['tp'] //수정해야함 //완료
+      // weather_ic=data['weather_ic'] // 수정해야함 //완료
+      //  out_aqi=data['out_aqi'] //수정해야함 //완료
+      place=data['place']
+      open_cycle=data['open_cycle']
+      console.log('창문여는Cycle',open_cycle)
+      window_state=data['window_state']
+      open_time=data['open_time']
+     console.log(current_number,total_number,degree,weather_ic,out_aqi)
+    //document.getElementById("degree").innerHTML = degree+"º";
+    document.getElementById("cur_people_state").innerHTML=current_number;
+    document.getElementById("max_people_state").innerHTML=total_number;
+    // if(weather_ic=='09d'|| weather_ic=='09n'||weather_ic=='10d'||weather_ic=='10n'||weather_ic=='13d'||weather_ic=='13n'||weather_ic=='11d'||weather_ic=='11n')
+    //   {
+    //     open_window_flag=false //창문 오픈 불가능하게 만듬
+    //   }
+    //   else{
+    //     open_window_flag=true //창문오픈 가능하게 만듬 
+    //   }
+    document.getElementById("h1_ventilation").innerHTML="00:00";
+    if(window_state==1) //문이열려있을때 
+    {
+      document.getElementById("window_img").src="images/OPEN.png";
+      document.getElementById("window_img").value="1";
+
+    }
+    else if(window_state==0)
+    {
+      document.getElementById("window_img").src="images/CLOSE.png";
+      document.getElementById("window_img").value="0";
+      
+    }
+  
+    // document.getElementById("weather_img").src="images/"+weather_ic+".png";
+    // if(out_aqi<50)
+    // {
+    //   document.getElementById("ext_aqi_face").className="far fa-smile fa-5x";
+    //   document.getElementById("int_aqi_face").className="far fa-smile fa-5x";
+    // }
+    // else if(50<out_aqi<100)
+    // {
+    //    document.getElementById("ext_aqi_face").className="far fa-meh fa-5x";
+    //    document.getElementById("int_aqi_face").className="far fa-meh fa-5x";
+     
+    // }
+    // else if(100<out_aqi<150)
+    // {
+    //   document.getElementById("ext_aqi_face").className="far fa-frown fa-5x";
+      
+    // }
+    // else 
+    // {
+    //   document.getElementById("ext_aqi_face").className="far fa-sad-tear fa-5x";
+    // }
+    
+    // document.getElementById("ext_aqi").innerHTML=out_aqi;
+    document.getElementById("int_aqi").innerHTML=out_aqi; //추후에 int_aqi 실내 공기질로 교체 해야함 
+    document.getElementById("what_text").innerHTML="current state of the "+place;
+    
+    document.getElementById("warning_img").src="images/GREEN.png";
+    });
+     
+  socket.on('in_aqi_to_main',(data)=>{
+    in_aqi=data['in_aqi'];
+    if(in_aqi<50)
+    {
+      document.getElementById("int_aqi_face").className="far fa-smile fa-5x";
+    }
+    else if(50<in_aqi<100)
+    {
+      document.getElementById("int_aqi_face").className="far fa-meh fa-5x";
+    }
+    else if(100<in_aqi<150)
+    {
+      document.getElementById("int_aqi_face").className="far fa-frown fa-5x";
+    }
+    else if(in_aqi>=150)
+    {
+      document.getElementById("int_aqi_face").className="far fa-sad-tear fa-5x";
+    }
+      document.getElementById("int_aqi").innerHTML=in_aqi;
+    if(in_aqi>out_aqi) //실내공기가 더 안좋으면 
+    {
+      if(document.getElementById("window_img").value=="0") //창문이 닫혀있는 상태면
+        {
+          windowchange(document.getElementById("window_img"));
+        }
+    }
+
+
+  })
+
+
+</script>
 <style>
   #chartdiv {
     width: 100%;
@@ -40,97 +254,6 @@
   }
   </style>
 
-<script>
-  am4core.ready(function() {
-  
-  // Themes begin
-  am4core.useTheme(am4themes_animated);
-  // Themes end
-  
-  var capacity = 6000;
-  var value = 4000;
-  var circleSize = 0.8;
-  
-  var component = am4core.create("chartdiv", am4core.Container)
-  component.width = am4core.percent(100);
-  component.height = am4core.percent(100);
-  
-  var chartContainer = component.createChild(am4core.Container);
-  chartContainer.x = am4core.percent(50)
-  chartContainer.y = am4core.percent(50)
-  
-  var circle = chartContainer.createChild(am4core.Circle);
-  circle.fill = am4core.color("#dadada");
-  
-  var circleMask = chartContainer.createChild(am4core.Circle);
-  
-  var waves = chartContainer.createChild(am4core.WavedRectangle);
-  waves.fill = am4core.color("#34a4eb");
-  waves.mask = circleMask;
-  waves.horizontalCenter = "middle";
-  waves.waveHeight = 10;
-  waves.waveLength = 30;
-  waves.y = 500;
-  circleMask.y = -500;
-  
-  component.events.on("maxsizechanged", function(){
-    var smallerSize = Math.min(component.pixelWidth, component.pixelHeight);  
-    var radius = smallerSize * circleSize / 2;
-  
-    circle.radius = radius;
-    circleMask.radius = radius;
-    waves.height = smallerSize;
-    waves.width = Math.max(component.pixelWidth, component.pixelHeight);  
-  
-    //capacityLabel.y = radius;
-  
-    var labelRadius = radius + 20
-  
-    capacityLabel.path = am4core.path.moveTo({x:-labelRadius, y:0}) + am4core.path.arcToPoint({x:labelRadius, y:0}, labelRadius, labelRadius);
-    capacityLabel.locationOnPath = 0.5;
-  
-    setValue(value);
-  })
-  
-  
-  function setValue(value){
-    var y = - circle.radius - waves.waveHeight + (1 - value / capacity) * circle.pixelRadius * 2;
-    waves.animate([{property:"y", to:y}, {property:"waveHeight", to:10, from:15}, {property:"x", from:-50, to:0}], 5000, am4core.ease.elasticOut);
-    circleMask.animate([{property:"y", to:-y},{property:"x", from:50, to:0}], 5000, am4core.ease.elasticOut);
-  }
-  
-  
-  var label = chartContainer.createChild(am4core.Label)
-  var formattedValue = component.numberFormatter.format(value, "#.#a");
-  formattedValue = formattedValue.toUpperCase();
-  
-  label.text = formattedValue + " People";
-  label.fill = am4core.color("#fff");
-  label.fontSize = 30;
-  label.horizontalCenter = "middle";
-  
-  
-  var capacityLabel = chartContainer.createChild(am4core.Label)
-  
-  var formattedCapacity = component.numberFormatter.format(capacity, "#.#a").toUpperCase();;
-  
-  capacityLabel.text = "Capacity " + formattedCapacity + " People";
-  capacityLabel.fill = am4core.color("#34a4eb");
-  capacityLabel.fontSize = 20;
-  capacityLabel.textAlign = "middle";
-  capacityLabel.padding(0,0,0,0);
-
-  if(value>capacity*0.8){
-    waves.fill = am4core.color("#eb4934");
-    capacityLabel.fill = am4core.color("#eb4934");
-  }
-  else if(value>capacity*0.5){
-    waves.fill = am4core.color("#ebdf34");
-    capacityLabel.fill = am4core.color("#ebdf34");
-  }
-  
-  }); // end am4core.ready()
-  </script>
 
 </head>
 <body>
@@ -141,51 +264,271 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="logo" style="float:right;"><img onclick="location.href='confirm.html';" style="margin-bottom:1rem;height:50px;width:50px;float:right;" src="images/setting.png"></div>
+        <div class="logo" style="float:right;"><img onclick="return_to_confirm()" style="margin-bottom:1rem;height:50px;width:50px;float:right;" src="images/setting.png"></div>
 
 
       </nav>
     </div>
     <!--header section end -->
     <!--services section start -->
-    <div class="what_we_do_section layout_padding" style="padding-top:50px;height:600px;background-image: url(images/services-bg.png);">
-      <div class="container">
+    <div class="main_body_section" style="padding-top:50px;height:600px;">
+      
         <h1 class="what_taital">Current State</h1>
-        <p class="what_text">Check current state of the room</p>
+        <p class="what_text" id="what_text"></p>
         
-        <div class="what_we_do_section_2" style="display: flex;flex-direction: column;align-items: center;">
-          <div class="row" style="justify-content: center;">
+        <div class="information_row_all" style="left:10px;width:50%">
+          <div class="row" style="justify-content: center;margin-top: 10%; margin-bottom: 10%;">
             <div class="col-lg-3 col-sm-6">
-              <div class="box_main" onclick="send(this)" value="home">
-                <div class="icon_1"><h1 style=" font-size:300%;color:aliceblue"> 5</h1></div>
+              <div class="box_main cur_people_box" >
+                <div class="icon_1">
+                  <h1 style=" font-size:300%;color:aliceblue"id="cur_people_state"> 
+
+                  </h1>
+                </div>
                 <h3 class="accounting_text">Current People</h3>
               </div>
             </div>
             <div class="col-lg-3 col-sm-6">
-              <div class="box_main" onclick="send(this)" value="company">
-                <div class="icon_1"><h1 style=" font-size:300%;color:aliceblue">30º</h1></div>
-                <h3 class="accounting_text">degree</h3>
+              <div class="box_main max_people_box" >
+                <div class="icon_1">
+                  <h1 style=" font-size:300%;color:aliceblue"id="max_people_state"value=""> 
+
+                  </h1>
+                </div>
+                <h3 class="accounting_text">max people  </h3>
               </div>
             </div>
             <div class="col-lg-3 col-sm-6">
-              <div class="box_main" onclick="send(this)" value="school">
-                <div class="icon_1"><img style="height:30%;width:30%;" src="images/sunny.png"></div>
-                <h3 class="accounting_text">weather</h3>
+              <div class="box_main last_ventilation_box" >
+                <div class="icon_1">
+                  <h1 style=" font-size:300%;color:aliceblue;" id ="h1_ventilation">
+    
+                </h1>
+              </div>
+                <h3 class="accounting_text">last ventilation</h3>
               </div>
             </div>
           </div>
-          <div class="row" style="margin-left:20%;width:100%;justify-content: center;">
-            <div class="box_main" style="margin-top:3%;height:30%;width:30%;">
-              <div class="icon_1"><h1 style=" font-size:300%;color:aliceblue">open</h1></div>
-              <h3 class="accounting_text">window</h3>
+          <div class="row" style="justify-content: center;">
+            <div class="col-lg-3 col-sm-6">
+              <div class="box_main AQI_box" >
+                <div class="icon_1" >
+                  <i id="int_aqi_face" class=""style="margin-bottom: 1%;"></i> 
+                  <h1 style=" font-size:300%;color:aliceblue" id="int_aqi">
+                    <!-- <script>document.write(out_aqi);</script>
+                    /
+                    <script>document.write(out_aqi);</script> -->
+                  </h1></div>
+                <h3 class="accounting_text">Internal AQI</h3>
+              </div>
             </div>
-          <div id="chartdiv" style="margin-left:5%;float:right;width:450px;"></div>
+            <div class="col-lg-3 col-sm-6">
+              <div class="box_main ext_aqi_box" >
+                <div class="icon_1" >
+                  <!--<img style="height:30%;width:30%;" src="" id="ext_weather_img">-->
+                  <i id="ext_aqi_face" class="" style="margin-bottom: 1%;"></i> 
+                  <h1 style=" font-size:300%;color:aliceblue" id="ext_aqi">
+                    <!-- <script>document.write(out_aqi);</script>
+                    /
+                    <script>document.write(out_aqi);</script> -->
+                  </h1>
+                </div>
+                <h3 class="accounting_text">External AQI</h3>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+              <div class="box_main weather_box" >
+                <div class="icon_1" >
+                  <img style="height:29%;width:29%;" src="" id="weather_img">
+                  <h1 style=" font-size:300%;color:aliceblue" id ="degree">
+                    <!-- <script>document.write(degree_func());
+                    </script> -->
+                    </h1>
+                  </div>
+                <h3 class="accounting_text">weather    </h3>
+              </div>
+            </div>
+          </div>
         </div>
+         <!--<div id="chartdiv" style="position: absolute; left: 68%; top: 36%;width:20%;"></div> -->
+        <div class="image_all"style="right:10px;width:50%"id="window_graph">
+            <div class="window_div"style="">
+              <div class="window_img_div" id="window_img_div"style="width:70%; height:70%; margin-top:10%;">
+                <img id="window_img" onclick="windowchange(this)" src="" value="" style=""></img>
+               </div>
+              
+              <div class="window_time_div" style="margin-top:20px;">
+              <h1 class="open_timer"id ="open_timer"style="text-align:left; padding-left:15%;"></h1>
+              </div>
+            </div>
+            <div class="warning_div">
+              <img id="warning_img" src="" style="width:50%; height:50%;"></img>
+            </div>
         </div>
-      </div>
+      
     </div>
     <!--services section end -->
+    <script>
+      var count_window_flag = true //실내인원계산을통해 창문열때 플래그
+      var x;
+      function return_to_confirm(){
+        socket.emit('return_to_confirm',{'return':1})
+        location.href='confirm.html';
+      }
+ 
+      function window_timer(){ //창문 알람 
+        var time = open_time*60;
+        
+        var min="";
+        var sec="";
+        var today = new Date();
+        var hours = today.getHours();
+        var minutes= today.getMinutes();
 
+        document.getElementById("h1_ventilation").innerHTML=hours+":"+minutes;
+       
+        x = setInterval(function(){
+        min = parseInt(time/60);
+        sec = time%60;
+
+        document.getElementById("open_timer").innerHTML=min+"min"+sec+"sec";
+        time--;
+        
+          if(time<0){
+            document.getElementById("window_img").value="1";
+          windowchange(document.getElementById("window_img"));
+          document.getElementById("open_timer").innerHTML="";
+          socket.emit('call_api',{'call':1})
+            clearInterval(x);
+            count_window_flag=true
+          }
+        
+       
+        
+      },1000);
+      
+      }
+
+      function windowchange(img){
+        if(img.value=="1"&& open_window_flag==true ){
+          img.src = "images/CLOSE.png"
+          
+          //서버로 창문 닫으라는 신호 보내야함 
+          socket.emit('control_the_window_plz',{'value':0})
+          clearInterval(x)
+          
+          document.getElementById("open_timer").innerHTML="";
+          //document.getElementById("window_img_div").style="width:70%;height:30%;margin-top:10%;";
+          img.value = "0"
+          console.log(total_number)
+        }
+        else if(img.value=="0"&&open_window_flag==true){
+          img.src = "images/OPEN.png"
+          img.value = "1"
+          //document.getElementById("window_img_div").style="width:70%; height:70%; margin-top:10%;";
+          
+          //서버로 창문 열라는 신호 보내야함 
+          socket.emit('control_the_window_plz',{'value':1})
+          window_timer();
+        }
+        else if(open_window_flag==false){
+          document.getElementById("open_timer").innerHTML="I don't open the window because it's raining.";
+        }
+      }
+     
+   
+    socket.on('current_number',(data)=>{
+    current_number=data['key'] //서버에서 실시간으로 현재인원을 받아와 화면에 띄워주는 역할 
+    document.getElementById("cur_people_state").innerHTML=current_number;
+    if(current_number>=total_number){
+      if(count_window_flag==true)
+      {
+        count_window_flag=false
+        if(document.getElementById("window_img").value=="0") //창문이 닫혀있는 상태면
+        {
+          windowchange(document.getElementById("window_img"));
+        }
+      }
+    }
+  })
+  socket.on('social_distance',(data)=>{
+    distance_number = data['key']
+    var per_number = Math.round((distance_number/total_number)*100);
+    if(per_number<=30)
+    {
+      document.getElementById("warning_img").src="images/GREEN.png";
+    }
+    else if(30<per_number&& per_number<80)
+    {
+      document.getElementById("warning_img").src="images/YELLOW.png";
+    }
+    else if(per_number>=80)
+    {
+      document.getElementById("warning_img").src="images/RED.png";
+      socket.emit('control_the_buzzer_plz',{'value':1})
+    }
+
+
+  })
+  function Auto_open(){
+      console.log('창문 자동 온오프 호출')
+      if(open_cycle==1)
+      {
+        setInterval(function(){
+          if(document.getElementById("window_img").value=="0")
+          {
+          windowchange(document.getElementById("window_img"));
+          
+          }
+        },3600000)
+      }
+      else if(open_cycle==2){
+        setInterval(function(){
+          if(document.getElementById("window_img").value=="0")
+          {
+          windowchange(document.getElementById("window_img"));
+          
+          }
+        },7200000)
+      }
+      else if(open_cycle==3){
+        setInterval(function(){
+          if(document.getElementById("window_img").value=="0")
+          {
+          windowchange(document.getElementById("window_img"));
+      
+
+          }
+        },10800000)
+      }
+      else if(open_cycle==4){
+        setInterval(function(){
+          if(document.getElementById("window_img").value=="0")
+          {
+          windowchange(document.getElementById("window_img"));
+       
+
+          }
+        },14400000)
+      }
+      else if(open_cycle==5){
+        setInterval(function(){
+          if(document.getElementById("window_img").value=="0")
+          {
+          windowchange(document.getElementById("window_img"));
+         
+
+          }
+        },18000000)
+      }
+      
+    
+  }
+  setTimeout(Auto_open,2000)
+  setInterval(function(){
+    apicall();
+  },600000)
+    </script>
     
     </body>
 </html>
