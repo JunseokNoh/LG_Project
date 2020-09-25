@@ -57,7 +57,7 @@
     <!-- 소켓 생성 영역-->
     <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
     <script>
-      const socket = io.connect("http://34.64.236.227:8080");
+      const socket = io.connect("http://");
 
       socket.on('connect',()=>{
         socket.emit('index_connect',{'index':'index.html_success'});

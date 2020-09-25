@@ -6,11 +6,8 @@ import time
 #create a Socket.IO server
 sio = socketio.Server(cors_allowed_origins='*')
 app = socketio.WSGIApp(sio)
-# air_condition_url="http://api.airvisual.com/v2/nearest_city?key=d459ec55-5797-44d9-a8ef-136efc7d1d7c"
 
 
-# air_page = urllib.request.urlopen(air_condition_url) #url을 여는 함수 
-# air_condition_dic = json.loads(air_page.read()) #url을 열어서 json을 읽어와 Dic 형태로 저장 
 #!!!!!!해야할것
 # 현재인원 들어올시 처리 해야함 
 #비오면 창문 안열리게 하기 (처리완료)
@@ -32,14 +29,6 @@ int_open_time=0
 distance_number=0
 window_state = 0 #창문이 열려있는지 닫혀있는지 
 buzzer_state=0 #부저가 울리고있는지 아닌지
-#tp = int(air_condition_dic['data']['current']['weather']['tp'])
-#out_aqi = int(air_condition_dic['data']['current']['pollution']['aqius'])
-#weather_ic=air_condition_dic['data']['current']['weather']['ic']
-
-
-# print(type(tp),type(out_aqi),type(weather_ic))
-# print(tp,out_aqi,weather_ic)
-
 
 
 @sio.event
@@ -49,25 +38,7 @@ def connect(sid, environ):
 @sio.event
 def disconnect(sid):
 	print('disconnect ', sid)
-# @sio.event
-# def call_api(sid,data): #창문이 닫힐때마다 api 호출 
-# 	global air_condition_url
-# 	air_page = urllib.request.urlopen(air_condition_url)
-# 	global air_condition_dic
-# 	air_condition_dic = json.loads(air_page.read())
-# 	#print(air_condition_dic)
-# 	global tp
-# 	tp = int(air_condition_dic['data']['current']['weather']['tp'])
-# 	global out_aqi
-# 	out_aqi = int(air_condition_dic['data']['current']['pollution']['aqius'])
-# 	global weather_ic
-# 	weather_ic=air_condition_dic['data']['current']['weather']['ic']
-# 	sio.emit('ref_weather',{'tp':tp,'out_aqi':out_aqi,'weather_ic':weather_ic})
-# 	print('날씨 api 호출 완료 ',tp,out_aqi,weather_ic)
-# @sio.on('my message',namespace='/chat')
-# def another_event(sid,data):
-# print(str(data))
-# sio.emit('my message',{'data':'foobar'})
+
 
 @sio.on('my message') #출입구에 설치된 카메라를 통해 실내인원 계산 
 def test(sid,json):
@@ -236,5 +207,5 @@ def calculator_aqi(sid,json):
 def return_confirm(sid,json):
 	sio.emit('init_confirm',{'place':place,'room_area':room_area,'space_range':space_range,'cycle':cycle,'open_time':open_time,'total_number':total_number})
 if __name__== '__main__':
-	eventlet.wsgi.server(eventlet.listen(('10.178.0.2',8080)),app)
+	eventlet.wsgi.server(eventlet.listen(('',8080)),app)
 

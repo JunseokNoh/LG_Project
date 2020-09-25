@@ -33,16 +33,10 @@
 <link rel="stylesheet" href="css/slidbar.css">
 <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
 <script>
-  // window.onload = function(){
-  //     const socket = io.connect("http://localhost:8080");
-      
-  //     socket.on('connect',()=>{
-  //       socket.emit('confirm_connect',{'client_confirm':'connect_success'});
-  //     })
-    const socket = io.connect("http://34.64.236.227:8080");
+
+    const socket = io.connect("http://");
     socket.emit('confirm_connect',{'confirm' : 'confirm.html_success'});
 
-  //}
 </script>
 <script> //confirm초기화면 및 main에서 confirm 돌아올때 
   var init_place;
@@ -74,12 +68,7 @@
 </script>
 </head>
 <body>
-  <!-- <script>
-    temp = location.href.split("?");
-    data=temp[1].split(":");
-    place = data[0];
-    area = data[1];
-  </script> -->
+
  
   <!--header section start -->
   <div class="header_section header_bg">
@@ -172,11 +161,7 @@
      
         var cycle = document.getElementById("ventilation_cycle").value;
         var open_time = document.getElementById("ventilation_open_time").value;
-        //console.log('arr1 arr2',arr1,arr2);
-        //var cycle = arr1.split("H");
-        //cycle[0]*=1; //환기주기 
-       // var open_time = arr2.split("M");
-        //open_time[0]*=1; //열려잇는시간
+
         console.log(total_number);
         var place = document.getElementById("findidplace").value;
         console.log(place);
@@ -201,7 +186,7 @@
         range_output.innerHTML = this.value;
         var space_value = this.value*1;
         area*=1;
-        //console.log(space_value,area);
+       
 
         socket.emit('calculator-person',{'area':area,'space_value':space_value})
       }

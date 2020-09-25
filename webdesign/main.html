@@ -54,7 +54,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
   var open_cycle=0;
   var open_window_flag=true 
   var distance_number=0;
-  var api_call_url = "http://api.airvisual.com/v2/nearest_city?key=d459ec55-5797-44d9-a8ef-136efc7d1d7c"
+  var api_call_url = "http://api.airvisual.com/v2/nearest_city?"
     function apicall(){
       $.ajax({
         type:"GET",
@@ -110,68 +110,24 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
         }
       })
     };
-    const socket = io.connect("http://34.64.236.227:8080");
-    // socket.on('ref_weather',(data)=>{
-    //   out_aqi=data['out_aqi']
-    //   degree=data['tp']
-    //   weather_ic=data['weather_ic']
-    //   document.getElementById("degree").innerHTML = degree+"º";
-    //   document.getElementById("ext_aqi").innerHTML=out_aqi;
-    //   document.getElementById("weather_img").src="images/"+weather_ic+".png";
-    //   if(weather_ic=='09d'|| weather_ic=='09n'||weather_ic=='10d'||weather_ic=='10n'||weather_ic=='13d'||weather_ic=='13n'||weather_ic=='11d'||weather_ic=='11n')
-    //   {
-    //     open_window_flag=false //창문 오픈 불가능하게 만듬
-    //   }
-    //   else{
-    //     open_window_flag=true //창문오픈 가능하게 만듬 
-    //   }
-    // if(out_aqi<50)
-    // {
-    //   document.getElementById("ext_aqi_face").className="far fa-smile fa-5x";
-    //   document.getElementById("int_aqi_face").className="far fa-smile fa-5x";
-    // }
-    // else if(50<out_aqi<100)
-    // {
-    //    document.getElementById("ext_aqi_face").className="far fa-meh fa-5x";
-    //    document.getElementById("int_aqi_face").className="far fa-meh fa-5x";
-     
-    // }
-    // else if(100<out_aqi<150)
-    // {
-    //   document.getElementById("ext_aqi_face").className="far fa-frown fa-5x";
-      
-    // }
-    // else 
-    // {
-    //   document.getElementById("ext_aqi_face").className="far fa-sad-tear fa-5x";
-    // }
-
-
-    // });
+    const socket = io.connect("http://");
+    
     socket.emit('main_connect',{'main' : 'main.html_success'});
     socket.on('main_default_value',(data)=>{
       apicall();
       current_number=data['current_number']
       total_number=data['total_number']
-      // degree=data['tp'] //수정해야함 //완료
-      // weather_ic=data['weather_ic'] // 수정해야함 //완료
-      //  out_aqi=data['out_aqi'] //수정해야함 //완료
+
       place=data['place']
       open_cycle=data['open_cycle']
       console.log('창문여는Cycle',open_cycle)
       window_state=data['window_state']
       open_time=data['open_time']
      console.log(current_number,total_number,degree,weather_ic,out_aqi)
-    //document.getElementById("degree").innerHTML = degree+"º";
+   
     document.getElementById("cur_people_state").innerHTML=current_number;
     document.getElementById("max_people_state").innerHTML=total_number;
-    // if(weather_ic=='09d'|| weather_ic=='09n'||weather_ic=='10d'||weather_ic=='10n'||weather_ic=='13d'||weather_ic=='13n'||weather_ic=='11d'||weather_ic=='11n')
-    //   {
-    //     open_window_flag=false //창문 오픈 불가능하게 만듬
-    //   }
-    //   else{
-    //     open_window_flag=true //창문오픈 가능하게 만듬 
-    //   }
+
     document.getElementById("h1_ventilation").innerHTML="00:00";
     if(window_state==1) //문이열려있을때 
     {
@@ -186,29 +142,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
       
     }
   
-    // document.getElementById("weather_img").src="images/"+weather_ic+".png";
-    // if(out_aqi<50)
-    // {
-    //   document.getElementById("ext_aqi_face").className="far fa-smile fa-5x";
-    //   document.getElementById("int_aqi_face").className="far fa-smile fa-5x";
-    // }
-    // else if(50<out_aqi<100)
-    // {
-    //    document.getElementById("ext_aqi_face").className="far fa-meh fa-5x";
-    //    document.getElementById("int_aqi_face").className="far fa-meh fa-5x";
-     
-    // }
-    // else if(100<out_aqi<150)
-    // {
-    //   document.getElementById("ext_aqi_face").className="far fa-frown fa-5x";
-      
-    // }
-    // else 
-    // {
-    //   document.getElementById("ext_aqi_face").className="far fa-sad-tear fa-5x";
-    // }
     
-    // document.getElementById("ext_aqi").innerHTML=out_aqi;
     document.getElementById("int_aqi").innerHTML=out_aqi; //추후에 int_aqi 실내 공기질로 교체 해야함 
     document.getElementById("what_text").innerHTML="current state of the "+place;
     
