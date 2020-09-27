@@ -350,7 +350,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
           //서버로 창문 닫으라는 신호 보내야함 
           socket.emit('control_the_window_plz',{'value':0})
           clearInterval(x)
-          
+          count_window_flag=true
           document.getElementById("open_timer").innerHTML="";
           //document.getElementById("window_img_div").style="width:70%;height:30%;margin-top:10%;";
           img.value = "0"
