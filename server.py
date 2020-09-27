@@ -29,6 +29,8 @@ int_open_time=0
 distance_number=0
 window_state = 0 #창문이 열려있는지 닫혀있는지 
 buzzer_state=0 #부저가 울리고있는지 아닌지
+pm=0.0
+co=0.0
 
 
 @sio.event
@@ -57,6 +59,7 @@ def test(sid,json):
 @sio.on('from_in_camera')
 def cal(sid,json):
 	distance_number=json['key']
+	print(distance_number)
 	sio.emit('social_distance',{'key':distance_number})
 
 	
@@ -124,8 +127,13 @@ def confirm_button(sid,json):
 
 @sio.on('in_aqi')
 def calculator_aqi(sid,json):
+	print(json)
+	global pm
+	global co
 	pm = json['pm'] #미세먼지
 	co = json['co'] #일산화탄소
+	print("일산화탄소",co)
+	print("미세먼지",pm)
 	co_hi=0#지수구분
 	co_lo=0
 	co_bp_hi=0.0#농도구분
