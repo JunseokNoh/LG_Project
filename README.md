@@ -9,7 +9,9 @@ Automatic Ventilation Smart Window
 + Arduino CO Sensor,Fine dust Sensor,Step Motor, Buzzer
 + Webcam 
 + Socket io 통신을 위한 Google Cloud Web Server
-+ 실내 공간 제어를 위한 Web App
++ 실내 공간 제어를 위한 Web App     
+
+<img src="https://user-images.githubusercontent.com/58390757/99180781-9a15c000-276c-11eb-95ee-dfc48127e33a.PNG" width="400px" height="200px" title="" alt="component"></img><br/>
 
 ### 사용 라이브러리
 + People counting Open cv
