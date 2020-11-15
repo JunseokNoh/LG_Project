@@ -54,4 +54,10 @@ Automatic Ventilation Smart Window
 <hr/>
 
 ### 데모
+<img src="https://user-images.githubusercontent.com/58390757/99180838-10b2bd80-276d-11eb-9a5e-7f89393abc9d.PNG" width="450px" height="300px" title="" alt="flow chart"></img><br/>
 
+<img src="https://user-images.githubusercontent.com/58390757/99180838-10b2bd80-276d-11eb-9a5e-7f89393abc9d.PNG" width="450px" height="300px" title="" alt="flow chart"></img><br/>
+
+<img src="https://user-images.githubusercontent.com/58390757/99180884-9171b980-276d-11eb-88b2-5a995f21f417.PNG" width="450px" height="300px" title="" alt="flow chart"></img><br/>
+
+<img src="https://user-images.githubusercontent.com/58390757/99180882-8b7bd880-276d-11eb-8503-78d31e8b99c0.PNG" width="450px" height="300px" title="" alt="flow chart"></img><br/>
