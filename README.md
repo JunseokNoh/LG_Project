@@ -23,7 +23,11 @@ Automatic Ventilation Smart Window
 #### 1. 실내 인원 > 적정 인원 시 자동 환기     
 - 출입구에 설치된 카메라를 통해 실내 출입 인원 트래킹 및 실내 인원 계산
 - Social distancing caculator를 활용한 실내 적정 인원 계산
-    - Formula : Square feet*(1-(Percent of floor space/100))/144
+    - Formula : Square feet*(1-(Percent of floor space/100))/144    
+    
+<img src="https://user-images.githubusercontent.com/58390757/99181081-7b64f880-276f-11eb-8b27-4d43857404cb.PNG" width="400px" height="200px" title="" alt="flow chart"></img>
+<br/>
+
 - 환기 주기 및 환기 시간 설정 가능
 
 #### 2. 내부 공기 AQI > 외부 공기 AQI시 자동 환기
