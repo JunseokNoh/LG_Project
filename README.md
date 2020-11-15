@@ -54,10 +54,8 @@ Automatic Ventilation Smart Window
 <hr/>
 
 ### 데모
-<img src="https://user-images.githubusercontent.com/58390757/99180955-2a083980-276e-11eb-80d9-0cd0caf518dc.PNG" width="300px" height="200px" title="" alt="flow chart"></img><br/>
-
-<img src="https://user-images.githubusercontent.com/58390757/99180838-10b2bd80-276d-11eb-9a5e-7f89393abc9d.PNG" width="300px" height="200px" title="" alt="flow chart"></img><br/>
-
-<img src="https://user-images.githubusercontent.com/58390757/99180958-312f4780-276e-11eb-9c0c-d8a95522afdd.PNG" width="300px" height="200px" title="" alt="flow chart"></img><br/>
-
+<img src="https://user-images.githubusercontent.com/58390757/99180955-2a083980-276e-11eb-80d9-0cd0caf518dc.PNG" width="300px" height="200px" title="" alt="flow chart"></img>
+<img src="https://user-images.githubusercontent.com/58390757/99180838-10b2bd80-276d-11eb-9a5e-7f89393abc9d.PNG" width="300px" height="200px" title="" alt="flow chart"></img>
+<br/>
+<img src="https://user-images.githubusercontent.com/58390757/99180958-312f4780-276e-11eb-9c0c-d8a95522afdd.PNG" width="300px" height="200px" title="" alt="flow chart"></img>
 <img src="https://user-images.githubusercontent.com/58390757/99180882-8b7bd880-276d-11eb-8503-78d31e8b99c0.PNG" width="300px" height="200px" title="" alt="flow chart"></img><br/>
