@@ -64,7 +64,7 @@ Automatic Ventilation Smart Window
 <img src="https://user-images.githubusercontent.com/58390757/99180958-312f4780-276e-11eb-9c0c-d8a95522afdd.PNG" width="300px" height="200px" title="" alt="flow chart"></img>
 <img src="https://user-images.githubusercontent.com/58390757/99180882-8b7bd880-276d-11eb-8503-78d31e8b99c0.PNG" width="300px" height="200px" title="" alt="flow chart"></img><br/>
 
-<br>
+<hr>
 
 ### contributors
 - 노준석
